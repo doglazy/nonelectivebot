@@ -128,18 +128,18 @@ public class DrivingBot {
 //        bucket = hwMap.servo.get("bucket");
 //
 //        // Set sensors
-//        camera = hwMap.get(WebcamName.class, "frontcam");
+        camera = hwMap.get(WebcamName.class, "frontcam");
         color = hwMap.get(RevColorSensorV3.class, "color");
 //        distance = hwMap.get(Rev2mDistanceSensor.class, "distance");
 //        colorR = hwMap.get(RevColorSensorV3.class, "colorR");
 //        colorL = hwMap.get(RevColorSensorV3.class, "colorL");
 //
 //        //camera set-up
-//        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-  //      webcam = OpenCvCameraFactory.getInstance().createWebcam(camera, cameraMonitorViewId);
-    //    pipeline = new CapDeterminationPipeline();
-      //  webcam.setPipeline(pipeline);
-//
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(camera, cameraMonitorViewId);
+        pipeline = new CapDeterminationPipeline();
+        webcam.setPipeline(pipeline);
+
     }
 
 

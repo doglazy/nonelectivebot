@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Paint;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -11,8 +9,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class CapDeterminationPipeline extends OpenCvPipeline {
-
-    enum CapPosition { //possibilities of cap position
+    enum ConePosition { //possibilities of cap position
         RIGHT,
         CENTER,
         LEFT
@@ -20,103 +17,108 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
 
     //color constants
     static final Scalar BLUE = new Scalar(0, 0, 255);
-    static final Scalar RED = new Scalar(255, 0, 0);
-    static final Scalar BLACK = new Scalar(0,0,0);
     static final Scalar GREEN = new Scalar(0, 255, 0);
+    static final Scalar PURPLE = new Scalar(230, 230, 250);
+    static final Scalar ORANGE = new Scalar(255, 99, 75);
+
 
     //sets points
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 220);
-    static final int REGION_WIDTH = 20;
-    static final int REGION_HEIGHT = 20;
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(120, 230);
+    static final int REGION_WIDTH = 50;
+    static final int REGION_HEIGHT = 50;
 
     //creates points for rectangles
-    Point region2_pointA = new Point(
-            REGION2_TOPLEFT_ANCHOR_POINT.x,
-            REGION2_TOPLEFT_ANCHOR_POINT.y);
-    Point region2_pointB = new Point(
-            REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-            REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+    Point region_pointA = new Point(
+            REGION1_TOPLEFT_ANCHOR_POINT.x,
+            REGION1_TOPLEFT_ANCHOR_POINT.y);
+    Point region_pointB = new Point(
+            REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+            REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
 
 
-    Mat region2_Cr;
+    Mat region_Cr;
     Mat YCrCb = new Mat();
-    Mat G = new Mat();
-    Mat R = new Mat();
-    Mat B = new Mat();
-    int avgb;
-    int avgr;
-    int avgg;
+    Mat Cr = new Mat();
+    int avg;
 
-    private volatile CapPosition position = CapPosition.CENTER;
+    private volatile ConePosition position = ConePosition.CENTER;
 
-    void extractgreen(Mat input) { //extracts chroma red channel for analysis
-        Core.extractChannel(input, G, 1);
-    }
-    void extractred(Mat input) { //extracts chroma red channel for analysis
-        Core.extractChannel(input, R, 0);
-    }
-    void extractblue(Mat input) { //extracts chroma red channel for analysis
-        Core.extractChannel(input, R, 2);
+    void inputToCr(Mat input) { //extracts chroma red channel for analysis
+        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(YCrCb, Cr, 2);
     }
 
     @Override
     public void init(Mat firstFrame) {
+        inputToCr(firstFrame);
+
         //creates 3 boxes which will be the regions for detection (one for each possible cap position)
-        G = G.submat(new Rect(region2_pointA, region2_pointB));
-      //  R = R.submat(new Rect(region2_pointA, region2_pointB));
-       // B = B.submat(new Rect(region2_pointA, region2_pointB));
+        region_Cr = Cr.submat(new Rect(region_pointA, region_pointB));
+
     }
+
 
     @Override
     public Mat processFrame(Mat input) {
-        extractgreen(input);
+        inputToCr(input);
 
         //average Cr values in each box
-        avgg = (int) Core.mean(G).val[0];
+        avg = (int) Core.mean(region_Cr).val[0];
+
+
         //outlines box area on camera stream
         Imgproc.rectangle(
                 input, // Buffer to draw on
-                region2_pointA, // First point which defines the rectangle
-                region2_pointB, // Second point which defines the rectangle
+                region_pointA, // First point which defines the rectangle
+                region_pointB, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
                 1); // Thickness of the rectangle lines
 
-        //find min Cr value out of the 3 boxes -> the min will be where the orange part of cap is detected
-        int min = avgb;
 
         //whichever is min, fill in box with green and assign position to according value (LEFT, CENTER, or RIGHT)
-        if ((avgb >= 150)&&(avgr<70)) {
+        if (avg < 120) {
+            position = ConePosition.RIGHT;
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region2_pointA, // First point which defines the rectangle
-                    region2_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
+                    region_pointA, // First point which defines the rectangle
+                    region_pointB, // Second point which defines the rectangle
+                    PURPLE, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
-        }
-        else if ( (avgb < 70) && (avgr >=150 ) ){
-            Imgproc.rectangle(input,region2_pointA,region2_pointB,RED,-1);
-        }
-        else if ((avgb <= 50)&& (avgr <= 50)){  Imgproc.rectangle(input,region2_pointA,region2_pointB,BLUE,-1);
 
+        } else if (avg < 130 && avg > 120) {
+            position = ConePosition.CENTER;
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA, // First point which defines the rectangle
+                    region_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
+
+        } else if (avg > 130) {
+            position = ConePosition.LEFT;
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA, // First point which defines the rectangle
+                    region_pointB, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
         }
 
         return input;
     }
 
-    public double getavgb(){
-        return avgb;
-    }
+    public double findAvg() {return avg;}
 
     //to be called in auto files
     public boolean isCapLeft() {
-        return position == CapPosition.LEFT;
+        return position == ConePosition.LEFT;
     }
     public boolean isCapCenter() {
-        return position == CapPosition.CENTER;
+        return position == ConePosition.CENTER;
     }
     public boolean isCapRight() {
-        return position == CapPosition.RIGHT;
+        return position == ConePosition.RIGHT;
     }
 
 }
