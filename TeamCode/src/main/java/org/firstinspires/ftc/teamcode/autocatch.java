@@ -23,9 +23,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 //@Disabled
 public class autocatch extends LinearOpMode {
     DrivingBot robot;
-//    CapDeterminationPipeline cap;
+    CapDeterminationPipeline cap;
 
-    int capPosition;
+    int ConePosition;
     int red;
     int green;
     int blue;
@@ -38,7 +38,7 @@ public class autocatch extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new DrivingBot();
         robot.init(hardwareMap);
-//        cap = new CapDeterminationPipeline();
+        cap = new CapDeterminationPipeline();
 
         //start camera
 
@@ -56,19 +56,6 @@ public class autocatch extends LinearOpMode {
 
 
         waitForStart();
-        robot.Clamp.setPosition(.05);
-        bot_sleep(1000);
-        robot.Clamp.setPosition(.3);
-        bot_sleep(1000);
-        robot.Extend.setPower(-.6);
-        bot_sleep(800);
-        robot.Extend.setPower(0);
-        bot_sleep(2000);
-        robot.moveForwardTo(.6, 12);
-        bot_sleep(4000);
-        robot.strafeLeft(1,12);
-        bot_sleep(1000);
-        robot.moveForwardTo(.4,4);
 
         bot_sleep(2500);
         red = robot.color.red();

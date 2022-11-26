@@ -23,6 +23,16 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
 
 
     //sets points
+    static final Point REGION1 = new Point (0,250);
+    static final Point REGION2 = new Point (50,250);
+    static final Point REGION3= new Point (100,250);
+    static final Point REGION4 = new Point (150,250);
+    static final Point REGION5 = new Point (200,250);
+    static final Point REGION6 = new Point (250,250);
+    static final Point REGION7 = new Point (300,250);
+    static final Point REGION8 = new Point (350,250);
+    static final Point REGION9 = new Point (400,250);
+    static final Point REGION10 = new Point (450,250);
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(120, 230);
     static final int REGION_WIDTH = 50;
     static final int REGION_HEIGHT = 50;
@@ -34,14 +44,92 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
     Point region_pointB = new Point(
             REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
             REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
+    Point region_pointA1 = new Point(
+            REGION1.x,
+            REGION1.y);
+    Point region_pointB1 = new Point(
+            REGION1.x + REGION_WIDTH,
+            REGION1.y + REGION_HEIGHT);
+    Point region_pointA2 = new Point(
+            REGION2.x,
+            REGION2.y);
+    Point region_pointB2 = new Point(
+            REGION2.x + REGION_WIDTH,
+            REGION2.y + REGION_HEIGHT);
+    Point region_pointA3 = new Point(
+            REGION3.x,
+            REGION3.y);
+    Point region_pointB3 = new Point(
+            REGION3.x + REGION_WIDTH,
+            REGION3.y + REGION_HEIGHT);
+    Point region_pointA4 = new Point(
+            REGION4.x,
+            REGION4.y);
+    Point region_pointB4 = new Point(
+            REGION4.x + REGION_WIDTH,
+            REGION4.y + REGION_HEIGHT);
+    Point region_pointA5 = new Point(
+            REGION5.x,
+            REGION5.y);
+    Point region_pointB5 = new Point(
+            REGION5.x + REGION_WIDTH,
+            REGION5.y + REGION_HEIGHT);
+    Point region_pointA6 = new Point(
+            REGION6.x,
+            REGION6.y);
+    Point region_pointB6 = new Point(
+            REGION6.x + REGION_WIDTH,
+            REGION6.y + REGION_HEIGHT);
+    Point region_pointA7 = new Point(
+            REGION7.x,
+            REGION7.y);
+    Point region_pointB7 = new Point(
+            REGION7.x + REGION_WIDTH,
+            REGION7.y + REGION_HEIGHT);
+    Point region_pointA8 = new Point(
+            REGION8.x,
+            REGION8.y);
+    Point region_pointB8 = new Point(
+            REGION8.x + REGION_WIDTH,
+            REGION8.y + REGION_HEIGHT);
+    Point region_pointA9 = new Point(
+            REGION9.x,
+            REGION9.y);
+    Point region_pointB9 = new Point(
+            REGION9.x + REGION_WIDTH,
+            REGION9.y + REGION_HEIGHT);
+    Point region_pointA10 = new Point(
+            REGION10.x,
+            REGION10.y);
+    Point region_pointB10 = new Point(
+            REGION10.x + REGION_WIDTH,
+            REGION10.y + REGION_HEIGHT);
 
 
     Mat region_Cr;
+    Mat region_Cr1;
+    Mat region_Cr2;
+    Mat region_Cr3;
+    Mat region_Cr4;
+    Mat region_Cr5;
+    Mat region_Cr6;
+    Mat region_Cr7;
+    Mat region_Cr8;
+    Mat region_Cr9;
+    Mat region_Cr10;
     Mat YCrCb = new Mat();
     Mat Cr = new Mat();
     int avg;
-
+    int avg1;
+    int avg2;
+    int avg3;
+    int avg4;
+    int avg5;
+    int avg6;
+    int avg7;
+    int avg8;
+    int avg9;
+    int avg10;
     private volatile ConePosition position = ConePosition.CENTER;
 
     void inputToCr(Mat input) { //extracts chroma red channel for analysis
@@ -55,6 +143,16 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
 
         //creates 3 boxes which will be the regions for detection (one for each possible cap position)
         region_Cr = Cr.submat(new Rect(region_pointA, region_pointB));
+        region_Cr1 = Cr.submat(new Rect(region_pointA1, region_pointB1));
+        region_Cr2 = Cr.submat(new Rect(region_pointA2, region_pointB2));
+        region_Cr3 = Cr.submat(new Rect(region_pointA3, region_pointB3));
+        region_Cr4 = Cr.submat(new Rect(region_pointA4, region_pointB4));
+        region_Cr5 = Cr.submat(new Rect(region_pointA5, region_pointB5));
+        region_Cr6 = Cr.submat(new Rect(region_pointA6, region_pointB6));
+        region_Cr7 = Cr.submat(new Rect(region_pointA7, region_pointB7));
+        region_Cr8 = Cr.submat(new Rect(region_pointA8, region_pointB8));
+        region_Cr9 = Cr.submat(new Rect(region_pointA9, region_pointB9));
+        region_Cr10 = Cr.submat(new Rect(region_pointA10, region_pointB10));
 
     }
 
@@ -65,6 +163,16 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
 
         //average Cr values in each box
         avg = (int) Core.mean(region_Cr).val[0];
+        avg1 = (int) Core.mean(region_Cr1).val[0];
+        avg2 = (int) Core.mean(region_Cr2).val[0];
+        avg3 = (int) Core.mean(region_Cr3).val[0];
+        avg4 = (int) Core.mean(region_Cr4).val[0];
+        avg5 = (int) Core.mean(region_Cr5).val[0];
+        avg6 = (int) Core.mean(region_Cr6).val[0];
+        avg7 = (int) Core.mean(region_Cr7).val[0];
+        avg8 = (int) Core.mean(region_Cr8).val[0];
+        avg9 = (int) Core.mean(region_Cr9).val[0];
+        avg10 = (int) Core.mean(region_Cr10).val[0];
 
 
         //outlines box area on camera stream
@@ -73,8 +181,155 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
                 region_pointA, // First point which defines the rectangle
                 region_pointB, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
-                1); // Thickness of the rectangle lines
-
+                1);// Thickness of the rectangle lines
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA1, // First point which defines the rectangle
+                region_pointB1, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA2, // First point which defines the rectangle
+                region_pointB2, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA3, // First point which defines the rectangle
+                region_pointB3, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA4, // First point which defines the rectangle
+                region_pointB4, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA5, // First point which defines the rectangle
+                region_pointB5, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA6, // First point which defines the rectangle
+                region_pointB6, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA7, // First point which defines the rectangle
+                region_pointB7, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA8, // First point which defines the rectangle
+                region_pointB8, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA9, // First point which defines the rectangle
+                region_pointB9, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA10, // First point which defines the rectangle
+                region_pointB10, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        if (avg1 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA1, // First point which defines the rectangle
+                    region_pointB1, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg2 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA2, // First point which defines the rectangle
+                    region_pointB2, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg3 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA3, // First point which defines the rectangle
+                    region_pointB3, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg3 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA3, // First point which defines the rectangle
+                    region_pointB3, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg4 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA4, // First point which defines the rectangle
+                    region_pointB4, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg5 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA5, // First point which defines the rectangle
+                    region_pointB5, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg6 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA6, // First point which defines the rectangle
+                    region_pointB6, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg7 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA7, // First point which defines the rectangle
+                    region_pointB7, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg8 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA8, // First point which defines the rectangle
+                    region_pointB8, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg9 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA9, // First point which defines the rectangle
+                    region_pointB9, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg10 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA10, // First point which defines the rectangle
+                    region_pointB10, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
 
         //whichever is min, fill in box with green and assign position to according value (LEFT, CENTER, or RIGHT)
         if (avg < 120) {
