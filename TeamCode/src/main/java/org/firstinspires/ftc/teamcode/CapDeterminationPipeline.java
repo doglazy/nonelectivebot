@@ -33,6 +33,11 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
     static final Point REGION8 = new Point (350,250);
     static final Point REGION9 = new Point (400,250);
     static final Point REGION10 = new Point (450,250);
+    static final Point REGION11 = new Point (500,250);
+    static final Point REGION12 = new Point (550,250);
+    static final Point REGION13 = new Point (590,250);
+    static final Point REGIONv1 = new Point (300,200);
+    static final Point REGIONv2 = new Point (300,150);
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(120, 230);
     static final int REGION_WIDTH = 50;
     static final int REGION_HEIGHT = 50;
@@ -104,6 +109,36 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
     Point region_pointB10 = new Point(
             REGION10.x + REGION_WIDTH,
             REGION10.y + REGION_HEIGHT);
+    Point region_pointA11 = new Point(
+            REGION11.x,
+            REGION11.y);
+    Point region_pointB11 = new Point(
+            REGION11.x + REGION_WIDTH,
+            REGION11.y + REGION_HEIGHT);
+    Point region_pointA12 = new Point(
+            REGION12.x,
+            REGION12.y);
+    Point region_pointB12 = new Point(
+            REGION12.x + REGION_WIDTH,
+            REGION12.y + REGION_HEIGHT);
+    Point region_pointA13 = new Point(
+            REGION13.x,
+            REGION13.y);
+    Point region_pointB13 = new Point(
+            REGION13.x + REGION_WIDTH,
+            REGION13.y + REGION_HEIGHT);
+    Point region_pointAv1 = new Point(
+            REGIONv1.x,
+            REGIONv1.y);
+    Point region_pointBv1 = new Point(
+            REGIONv1.x + REGION_WIDTH,
+            REGIONv1.y + REGION_HEIGHT);
+    Point region_pointAv2 = new Point(
+            REGIONv2.x,
+            REGIONv2.y);
+    Point region_pointBv2 = new Point(
+            REGIONv2.x + REGION_WIDTH,
+            REGIONv2.y + REGION_HEIGHT);
 
 
     Mat region_Cr;
@@ -117,6 +152,11 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
     Mat region_Cr8;
     Mat region_Cr9;
     Mat region_Cr10;
+    Mat region_Cr11;
+    Mat region_Cr12;
+    Mat region_Cr13;
+    Mat region_Crv1;
+    Mat region_Crv2;
     Mat YCrCb = new Mat();
     Mat Cr = new Mat();
     int avg;
@@ -130,6 +170,11 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
     int avg8;
     int avg9;
     int avg10;
+    int avg11;
+    int avg12;
+    int avg13;
+    int avgv1;
+    int avgv2;
     private volatile ConePosition position = ConePosition.CENTER;
 
     void inputToCr(Mat input) { //extracts chroma red channel for analysis
@@ -153,6 +198,11 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
         region_Cr8 = Cr.submat(new Rect(region_pointA8, region_pointB8));
         region_Cr9 = Cr.submat(new Rect(region_pointA9, region_pointB9));
         region_Cr10 = Cr.submat(new Rect(region_pointA10, region_pointB10));
+        region_Cr11 = Cr.submat(new Rect(region_pointA11, region_pointB11));
+        region_Cr12 = Cr.submat(new Rect(region_pointA12, region_pointB12));
+        region_Cr13 = Cr.submat(new Rect(region_pointA13, region_pointB13));
+        region_Crv1 = Cr.submat(new Rect(region_pointAv1, region_pointBv1));
+        region_Crv2 = Cr.submat(new Rect(region_pointAv2, region_pointBv2));
 
     }
 
@@ -173,6 +223,11 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
         avg8 = (int) Core.mean(region_Cr8).val[0];
         avg9 = (int) Core.mean(region_Cr9).val[0];
         avg10 = (int) Core.mean(region_Cr10).val[0];
+        avg11 = (int) Core.mean(region_Cr11).val[0];
+        avg12 = (int) Core.mean(region_Cr12).val[0];
+        avg13 = (int) Core.mean(region_Cr13).val[0];
+        avgv1 = (int) Core.mean(region_Crv1).val[0];
+        avgv2 = (int) Core.mean(region_Crv2).val[0];
 
 
         //outlines box area on camera stream
@@ -240,6 +295,36 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
                 input, // Buffer to draw on
                 region_pointA10, // First point which defines the rectangle
                 region_pointB10, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA11, // First point which defines the rectangle
+                region_pointB11, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA12, // First point which defines the rectangle
+                region_pointB12, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointA13, // First point which defines the rectangle
+                region_pointB13, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointAv1, // First point which defines the rectangle
+                region_pointBv1, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                1);
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                region_pointAv2, // First point which defines the rectangle
+                region_pointBv2, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
                 1);
         if (avg1 < 110){
@@ -327,6 +412,46 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
                     input, // Buffer to draw on
                     region_pointA10, // First point which defines the rectangle
                     region_pointB10, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg11 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA11, // First point which defines the rectangle
+                    region_pointB11, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg12 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA12, // First point which defines the rectangle
+                    region_pointB12, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avg13 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointA13, // First point which defines the rectangle
+                    region_pointB13, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avgv1 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointAv1, // First point which defines the rectangle
+                    region_pointBv1, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avgv2 < 110){
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region_pointAv2, // First point which defines the rectangle
+                    region_pointBv2, // Second point which defines the rectangle
                     ORANGE, // The color the rectangle is drawn in
                     1);
         }
