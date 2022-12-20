@@ -28,10 +28,10 @@ public class DrivingBot {
     public DcMotor Rotate;
     public DcMotor Extend;
     public Servo Clamp;
-//    public DcMotor arm;
+    //    public DcMotor arm;
 //    public DcMotor intake;
     public RevColorSensorV3 color;
-//    public Rev2mDistanceSensor distance;
+    //    public Rev2mDistanceSensor distance;
 //    public RevColorSensorV3 colorR;
 //    public RevColorSensorV3 colorL;
 //
@@ -45,7 +45,7 @@ public class DrivingBot {
 
     public int arm_start;
     public int platform_start;
-//
+    //
     CapDeterminationPipeline pipeline;
 
 
@@ -82,7 +82,7 @@ public class DrivingBot {
         FLdrive = hwMap.dcMotor.get("FLdrive");
         BRdrive = hwMap.dcMotor.get("BRdrive");
         BLdrive = hwMap.dcMotor.get("BLdrive");
-    //    Rotate = hwMap.dcMotor.get("Rotate");
+        //    Rotate = hwMap.dcMotor.get("Rotate");
         Extend = hwMap.dcMotor.get("Expand");
         Clamp = hwMap.servo.get("Clamp");
 //
@@ -93,10 +93,10 @@ public class DrivingBot {
 //
 //
 //        // Set motors' direction
-        FRdrive.setDirection(DcMotor.Direction.FORWARD);
-        FLdrive.setDirection(DcMotor.Direction.REVERSE);
-        BRdrive.setDirection(DcMotor.Direction.FORWARD);
-        BLdrive.setDirection(DcMotor.Direction.REVERSE);
+        FRdrive.setDirection(DcMotor.Direction.REVERSE);
+        FLdrive.setDirection(DcMotor.Direction.FORWARD);
+        BRdrive.setDirection(DcMotor.Direction.REVERSE);
+        BLdrive.setDirection(DcMotor.Direction.FORWARD);
 //        platform.setDirection(DcMotor.Direction.FORWARD);
 //        arm.setDirection(DcMotor.Direction.FORWARD);
 //
@@ -333,13 +333,13 @@ public class DrivingBot {
     }
 
 
- /*   public void correctPos(){
-        int correctionleft = (BLdrive.getCurrentPosition() - sumY);
-        int correctionright = (BRdrive.getCurrentPosition() - sumX);
-        AddDataX(RightOG, correctionright);
-        AddDataY(LeftOG, correctionleft);
-    }
-*/
+    /*   public void correctPos(){
+           int correctionleft = (BLdrive.getCurrentPosition() - sumY);
+           int correctionright = (BRdrive.getCurrentPosition() - sumX);
+           AddDataX(RightOG, correctionright);
+           AddDataY(LeftOG, correctionleft);
+       }
+   */
     private int inchesToPosition(double inches) {
         return (int) (inches * COUNTS_PER_INCH);
     }

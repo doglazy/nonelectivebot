@@ -1,4 +1,4 @@
- package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -19,16 +19,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Autonomous(name = "autocatch")
+@Autonomous(name = "AutoBW")
 //@Disabled
 public class autocatch extends LinearOpMode {
     DrivingBot robot;
-    CapDeterminationPipeline cap;
 
-    int ConePosition;
-    int red;
-    int green;
-    int blue;
+    int capPosition;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -38,14 +34,38 @@ public class autocatch extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new DrivingBot();
         robot.init(hardwareMap);
-        cap = new CapDeterminationPipeline();
 
         //start camera
+        robot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened() {
+                robot.webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("camera", "failed");
+                telemetry.update();
+            }
+        });
 
         //choose cap position during init
         while (!opModeIsActive()) {
             robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             //start point for platform and arm as reference point
+            if (robot.pipeline.isCapLeft()) {
+                capPosition = 0;
+                telemetry.addData("cap", 0);
+            } else if (robot.pipeline.isCapCenter()) {
+                capPosition = 1;
+                telemetry.addData("cap", 1);
+            } else {
+                capPosition = 2;
+                telemetry.addData("cap", 2);
+            }
+            telemetry.addData("v1",robot.pipeline.v1);
+            telemetry.addData("v2",robot.pipeline.v2);
             telemetry.update();
             if (isStopRequested())
                 break;
@@ -57,77 +77,84 @@ public class autocatch extends LinearOpMode {
 
         waitForStart();
 
-        bot_sleep(2500);
-        red = robot.color.red();
-        green = robot.color.green();
-        blue = robot.color.blue();
-        telemetry.addData("red", red);
-        telemetry.addData("blue", blue);
-        telemetry.addData("green", green);
-        telemetry.update();
-        bot_sleep(1500);
 
         while (opModeIsActive()) {
-            if ((red >= blue)&&(blue <= 85)&&(red >= 90)){
-                telemetry.addData("red", red);
-                telemetry.update();
-                bot_sleep(500);
-                robot.strafeLeft(.6,24);
-                bot_sleep(6500);
-                robot.moveForwardTo(.6,10);
-                bot_sleep(3000);
-            }
-            if ((red <= 85)&&(blue >= red)&&(blue>=90)){
-                telemetry.addData("blue", blue);
-                telemetry.update();
-                bot_sleep(500);
-                robot.moveForwardTo(.6,15);
-                bot_sleep(6500);
-                robot.strafeRight(.6,3.5);
-                bot_sleep(3000);
-            }
-            if ((red <=83)&&(green <= 83)&&(blue <= 83)){
-               telemetry.addData("black", red);
-               telemetry.update();
-               bot_sleep(500);
-               robot.strafeRight(.6,28);
-               bot_sleep(6500);
-               robot.moveForwardTo(.6,10);
-               bot_sleep(3000);
-            }
-            if ((red <=83)&&(green >= 83)&&(blue <= 83)){
-                telemetry.addData("blue", blue);
-                telemetry.update();
-                bot_sleep(500);
-                robot.moveForwardTo(.6,15);
-                bot_sleep(6500);
-                robot.strafeRight(.6,3.5);
-                bot_sleep(3000);
+            switch (capPosition) {
+                case 0:
+                    telemetry.addData("cap", "left");
+                    telemetry.update();
+                    capLeft();
+                    break;
+                case 1:
+                    telemetry.addData("cap", "middle");
+                    telemetry.update();
+                    capMiddle();
+                    break;
+                default:
+                    telemetry.addData("cap", "right");
+                    telemetry.update();
+                    capRight();
+                    break;
             }
             break;
         }
         robot.stopMoving();
     }
-    private void capLeft(){
+    private void scoremed(){
+        while (robot.pipeline.v1 != 1 && robot.pipeline.v2 != 1 && isStopRequested() != true){
+            robot.FRdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.FLdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.BRdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.BLdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.FRdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.FLdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BRdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BLdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.FLdrive.setPower(.3);
+            robot.BLdrive.setPower(.3);
+            robot.BRdrive.setPower(.3);
+            robot.FRdrive.setPower(.3);
+
+        }
+        robot.FRdrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.FLdrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.BRdrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.BLdrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Extend.setPower(.5);
+        robot.Extend.setTargetPosition(400);
+
+    }
+
+    private void capLeft() {
+        robot.moveForwardTo(.2,2.5);
+        bot_sleep(200);
+        robot.strafeLeft(.3,27);
+        bot_sleep(5000);
+        robot.spinLeft(.2,.5);
+        bot_sleep(1500);
+        robot.moveForwardTo(.4,30);
+        bot_sleep(5000);
 
     }
 
     private void capMiddle() {
-       robot.strafeRight(1,15);
-       telemetry.addData("yes",1);
-       telemetry.addData("trgtposfl", robot.FLdrive.getTargetPosition() );
-       telemetry.addData("flmode", robot.FLdrive.getMode() );
-       telemetry.addData("flpow", robot.FLdrive.getPower());
-       telemetry.update();
-        bot_sleep(2000);
-        robot.moveForwardTo(1,15);
+        robot.moveForwardTo(.1,25);
+        bot_sleep(200);
+        robot.spinRight(.2,.75);
         bot_sleep(1000);
-        robot.strafeLeft(1,15);
-        bot_sleep(500);
-
+        robot.moveForwardTo(.5,2);
+        bot_sleep(5000);
     }
 
     private void capRight() {
+        robot.moveForwardTo(.2,2.5);
+        bot_sleep(200);
+        robot.strafeRight(.3,25);
+        bot_sleep(5000);
+        robot.spinLeft(.2,.75);
+        robot.moveForwardTo(.5,22.5);
+        bot_sleep(5000);
     }
 
     private void bot_sleep(int ms) {
@@ -153,7 +180,7 @@ public class autocatch extends LinearOpMode {
         telemetry.addData("current", ((DcMotorEx) robot.BRdrive).getCurrent(CurrentUnit.MILLIAMPS)*5);
         telemetry.update();
         robot.setPower(0);
-        bot_sleep(800);
+        bot_sleep(4000);
     }
 
 }

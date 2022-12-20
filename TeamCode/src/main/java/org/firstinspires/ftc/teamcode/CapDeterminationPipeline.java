@@ -14,7 +14,8 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
         CENTER,
         LEFT
     }
-
+    public int v1 = 0;
+    public int v2 = 0;
     //color constants
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
@@ -38,7 +39,7 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
     static final Point REGION13 = new Point (590,250);
     static final Point REGIONv1 = new Point (300,200);
     static final Point REGIONv2 = new Point (300,150);
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(120, 230);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(250, 250);
     static final int REGION_WIDTH = 50;
     static final int REGION_HEIGHT = 50;
 
@@ -203,6 +204,7 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
         region_Cr13 = Cr.submat(new Rect(region_pointA13, region_pointB13));
         region_Crv1 = Cr.submat(new Rect(region_pointAv1, region_pointBv1));
         region_Crv2 = Cr.submat(new Rect(region_pointAv2, region_pointBv2));
+
 
     }
 
@@ -439,16 +441,40 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
                     ORANGE, // The color the rectangle is drawn in
                     1);
         }
-        if (avgv1 < 110){
+        if (avgv1 <= 110){
+            v1 = 1;
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region_pointAv1, // First point which defines the rectangle
                     region_pointBv1, // Second point which defines the rectangle
+                    ORANGE,// The color the rectangle is drawn in
+
+                    1);
+        }
+        if (avgv2 <= 110){
+            v2 = 1;
+            Imgproc.rectangle(
+
+                    input, // Buffer to draw on
+                    region_pointAv2, // First point which defines the rectangle
+                    region_pointBv2, // Second point which defines the rectangle
                     ORANGE, // The color the rectangle is drawn in
                     1);
         }
-        if (avgv2 < 110){
+        if (avgv2 > 110){
+            v2 = 0;
             Imgproc.rectangle(
+
+                    input, // Buffer to draw on
+                    region_pointAv2, // First point which defines the rectangle
+                    region_pointBv2, // Second point which defines the rectangle
+                    ORANGE, // The color the rectangle is drawn in
+                    1);
+        }
+        if (avgv1 > 110){
+            v1 = 0;
+            Imgproc.rectangle(
+
                     input, // Buffer to draw on
                     region_pointAv2, // First point which defines the rectangle
                     region_pointBv2, // Second point which defines the rectangle
@@ -457,7 +483,7 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
         }
 
         //whichever is min, fill in box with green and assign position to according value (LEFT, CENTER, or RIGHT)
-        if (avg < 120) {
+        if (avg < 110) {
             position = ConePosition.RIGHT;
             Imgproc.rectangle(
                     input, // Buffer to draw on
@@ -466,7 +492,7 @@ public class CapDeterminationPipeline extends OpenCvPipeline {
                     PURPLE, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
 
-        } else if (avg < 130 && avg > 120) {
+        } else if (avg < 130 && avg > 110) {
             position = ConePosition.CENTER;
             Imgproc.rectangle(
                     input, // Buffer to draw on
